@@ -1,49 +1,72 @@
+x-common:
+  &common
+  env_file: .env
+  networks:
+    - backend
+
 services:
   hack-db:
+    <<: [ *common ]
     image: postgres:16.3
     container_name: hack-db
     hostname: hack_db
     restart: always
     environment:
-      POSTGRES_DB: "hack"
-      POSTGRES_USER: "hack"
-      POSTGRES_PASSWORD: "hack"
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
     volumes:
       - /home/kinoko/postgresql/hack:/var/lib/postgresql/data
-    networks:
-      - backend
     ports:
       - "7100:5432"
 
   hack-redis:
+    <<: [ *common ]
     image: redis:latest
     container_name: hack_redis
     hostname: hack_redis
     restart: always
     command: [ "redis-server", "--appendonly", "yes" ]
-    networks:
-      - backend
     volumes:
       - /home/kinoko/redis/hack:/data
     ports:
       - '6300:6379'
 
   hack-api:
-    build:
-      dockerfile: ./Dockerfile
-      context: ./
+    <<: [ *common ]
+    build: .
     restart: always
     image: hack-api
     container_name: hack-api
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - hack-db
     volumes:
       - /home/kinoko/logs/hack-api:/logs
-    networks:
-      - backend
     ports:
       - "7000:7000"
 
+  minio:
+    <<: [ *common ]
+    container_name: hack-minio
+    image: minio/minio:${MINIO_VERSION}
+    shm_size: 128mb
+    environment:
+      MINIO_ROOT_USER: $MINIO_USERNAME
+      MINIO_ROOT_PASSWORD: $MINIO_PASSWORD
+    restart: always
+    ports:
+      - $MINIO_API_PORT:9000
+      - $MINIO_CLI_PORT:9001
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
 networks:
   backend:
-    external: true
+    driver: bridge
