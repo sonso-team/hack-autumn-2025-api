@@ -57,7 +57,7 @@ dependencies {
     // Mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
-    //MINIO
+    // MINIO
     implementation("io.minio:minio:$minioVersion")
 
     // Jackson

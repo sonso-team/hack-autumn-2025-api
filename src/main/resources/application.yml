@@ -1,6 +1,9 @@
+logging:
+  config: 'classpath:log4j2.yml'
+
 spring:
   application:
-    name: hack-autum
+    name: hack-autumn-2025
   jpa:
     hibernate:
       ddl-auto: none

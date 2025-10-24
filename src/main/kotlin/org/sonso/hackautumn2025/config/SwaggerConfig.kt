@@ -16,15 +16,12 @@ import org.springframework.context.annotation.Configuration
         Server(url = "http://localhost:8088", description = "ХАК")
     ],
     info = Info(
-        title = "ХАК DAUUUUUAY",
+        title = "ОСЕНЬ ХАК 2025",
         description = "ОСЕНЬ ХАК 2025",
         version = "1.0.0",
         contact = Contact(
             name = "ТАКАЯ-ТО ТАКАЯ-ТО",
-            email = "ivan.zapara.04@mail.ru",
-            url = "https://yandex.ru/images/search?img_url=https%3A%2F%2Fi.pinimg.com" +
-                "%2Foriginals%2F90%2F9b%2F82%2F909b82ec03a296c814bf6b544dd0b191.jpg" +
-                "&lr=39&pos=0&rpt=simage&source=serp&text=смешные%20фото%20для%20группы%20с%20котами"
+            url = "hack.kinoko.su"
         )
     ),
     security = [SecurityRequirement(name = "bearerAuth")]

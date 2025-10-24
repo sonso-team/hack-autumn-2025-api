@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.properties.MinioProperties
 import org.sonso.hackautumn2025.repository.UserRepository
 import org.springframework.core.io.ClassPathResource
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,6 +25,7 @@ import java.text.Normalizer
 import java.util.*
 
 @Service
+@EnableScheduling
 class MinioService(
     private val minioClient: MinioClient,
     private val minioProperties: MinioProperties,
