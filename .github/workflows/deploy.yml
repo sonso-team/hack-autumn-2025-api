@@ -93,6 +93,12 @@ jobs:
           sudo chown kinoko:kinoko "${{ env.TARGET_DIR }}/.env"
           sudo chmod 600 "${{ env.TARGET_DIR }}/.env"
 
+      - name: Relax .env permissions for runner
+        run: |
+          # даём группе раннера (текущий пользователь) читать .env
+          sudo chgrp "$(id -gn)" "${{ env.TARGET_DIR }}/.env"
+          sudo chmod 640 "${{ env.TARGET_DIR }}/.env"
+
 
       - name: Build and deploy with Docker Compose
         run: |
