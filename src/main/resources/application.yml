@@ -1,0 +1,9 @@
+logging:
+  config: 'classpath:log4j2.yml'
+
+spring:
+  application:
+    name: hack-autumn-2025
+
+server:
+  port: 7000

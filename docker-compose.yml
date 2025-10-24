@@ -1,0 +1,49 @@
+services:
+  hack-db:
+    image: postgres:16.3
+    container_name: hack-db
+    hostname: hack_db
+    restart: always
+    environment:
+      POSTGRES_DB: "hack"
+      POSTGRES_USER: "hack"
+      POSTGRES_PASSWORD: "hack"
+    volumes:
+      - /home/kinoko/postgresql/hack:/var/lib/postgresql/data
+    networks:
+      - backend
+    ports:
+      - "7100:5432"
+
+  hack-redis:
+    image: redis:latest
+    container_name: hack_redis
+    hostname: hack_redis
+    restart: always
+    command: [ "redis-server", "--appendonly", "yes" ]
+    networks:
+      - backend
+    volumes:
+      - /home/kinoko/redis/hack:/data
+    ports:
+      - '6300:6379'
+
+  hack-api:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    restart: always
+    image: hack-api
+    container_name: hack-api
+    depends_on:
+      - hack-db
+    volumes:
+      - /home/kinoko/logs/hack-api:/logs
+    networks:
+      - backend
+    ports:
+      - "7000:7000"
+
+networks:
+  backend:
+    external: true
