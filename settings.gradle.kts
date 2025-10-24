@@ -1,1 +1,1 @@
-rootProject.name = "hack-autumn-2025"
+rootProject.name = "hack-autumn-2025-api"

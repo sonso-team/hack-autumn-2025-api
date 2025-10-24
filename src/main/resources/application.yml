@@ -4,6 +4,38 @@ logging:
 spring:
   application:
     name: hack-autumn-2025
+  jpa:
+    hibernate:
+      ddl-auto: none
+  mail:
+    host: ${SMTP_HOST}
+    port: 587
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
+    protocol: smtp
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
-  port: 7000
+  port: ${API_PORT}
+
+app:
+  scheduled:
+    clean-unused-files: "0 0 3 * * ?"
+  auth:
+    admin-code: ${ADMIN_CODE}
+    admin-password: ${ADMIN_PASSWORD}
+    password-life-time: ${PASSWORD_LIFE_TIME}
+    token:
+      access-life-time: ${ACCESS_LIFE_TIME}
+      refresh-life-time: ${REFRESH_LIFE_TIME}
+      secret: ${SECRET}
+  minio:
+    username: ${MINIO_USERNAME}
+    password: ${MINIO_PASSWORD}
+    user-avatars-bucket: user-avatars-bucket
