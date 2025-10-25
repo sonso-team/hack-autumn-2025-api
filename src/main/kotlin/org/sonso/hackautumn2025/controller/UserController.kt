@@ -2,16 +2,16 @@ package org.sonso.hackautumn2025.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletResponse
+import org.sonso.hackautumn2025.dto.User
+import org.sonso.hackautumn2025.dto.request.UserUpdateRequest
+import org.sonso.hackautumn2025.entity.UserEntity
+import org.sonso.hackautumn2025.service.UserService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import org.sonso.hackautumn2025.entity.UserEntity
-import org.sonso.hackautumn2025.service.UserService
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,7 +19,6 @@ import org.sonso.hackautumn2025.service.UserService
 class UserController(
     private val userService: UserService
 ) {
-
     @PostMapping(
         "/upload-avatar",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
@@ -32,4 +31,21 @@ class UserController(
         val pathAvatar = userService.uploadAvatar(user, file)
         return ResponseEntity.ok(pathAvatar)
     }
+
+    @PutMapping("/update")
+    @Operation(summary = "Редактирование профиля", description = "Редактирование данных пользователя")
+    fun update(
+        @AuthenticationPrincipal user: UserEntity,
+        @RequestBody userUpdate: UserUpdateRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<User> =
+        ResponseEntity.ok(userService.update(user.id, userUpdate, response))
+
+
+    @DeleteMapping("/delete")
+    fun deleteById(
+        @AuthenticationPrincipal user: UserEntity,
+    ): ResponseEntity<User> =
+        ResponseEntity.ok(userService.deleteById(user.id))
+
 }
