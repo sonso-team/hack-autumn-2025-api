@@ -1,5 +1,9 @@
 package org.sonso.hackautumn2025.config.authentication
 
+import org.sonso.hackautumn2025.exceptions.UserNotFoundException
+import org.sonso.hackautumn2025.properties.Role.ADMIN
+import org.sonso.hackautumn2025.repository.UserRepository
+import org.sonso.hackautumn2025.service.JwtService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -13,10 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.sonso.hackautumn2025.properties.Role.ADMIN
-import org.sonso.hackautumn2025.repository.UserRepository
-import org.sonso.hackautumn2025.service.JwtService
-import org.sonso.hackautumn2025.util.exception.UserNotFoundException
 
 @Configuration
 @EnableWebSecurity
