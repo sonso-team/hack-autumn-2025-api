@@ -60,6 +60,9 @@ dependencies {
     // Mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // MINIO
     implementation("io.minio:minio:$minioVersion")
 
@@ -69,12 +72,6 @@ dependencies {
     // Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$openapiWebMvcVersion")
     implementation("org.springdoc:springdoc-openapi-ui:$openapiUiVersion")
-
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.springframework.security:spring-security-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Jackson
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
