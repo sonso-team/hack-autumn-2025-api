@@ -1,6 +1,6 @@
 package org.sonso.hackautumn2025.service
 
-import org.sonso.hackautumn2025.dto.*
+import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.dto.request.CreateRoomRequest
 import org.sonso.hackautumn2025.dto.request.UpdateRoomRequest
 import org.sonso.hackautumn2025.dto.response.JoinRoomResponse
@@ -10,13 +10,12 @@ import org.sonso.hackautumn2025.entity.RoomParticipantEntity
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.repository.RoomParticipantRepository
 import org.sonso.hackautumn2025.repository.RoomRepository
+import org.sonso.hackautumn2025.repository.UserRepository
+import org.sonso.hackautumn2025.util.toHistoryUnit
 import org.sonso.hackautumn2025.util.toRoomResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import org.slf4j.LoggerFactory
-import org.sonso.hackautumn2025.repository.UserRepository
-import org.sonso.hackautumn2025.util.toHistoryUnit
 import java.util.*
 
 @Service

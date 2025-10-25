@@ -36,6 +36,7 @@ fun RoomEntity.toRoomResponse(participantCount: Int) = RoomResponse(
     participantCount = participantCount,
     createdAt = createdAt,
     updatedAt = updatedAt
+)
   
 fun RoomEntity.toHistoryUnit() = HistoryUnit(
     name = this.name,

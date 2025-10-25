@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.LoggerFactory
+import org.sonso.hackautumn2025.dto.HistoryUnit
 import org.sonso.hackautumn2025.dto.request.CreateRoomRequest
 import org.sonso.hackautumn2025.dto.request.JoinRoomRequest
 import org.sonso.hackautumn2025.dto.request.UpdateRoomRequest
@@ -12,20 +14,19 @@ import org.sonso.hackautumn2025.dto.response.JoinRoomResponse
 import org.sonso.hackautumn2025.dto.response.RoomResponse
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.service.RoomService
-import org.springframework.http.ResponseEntity
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.*
-import java.util.*
-import org.slf4j.LoggerFactory
-import org.sonso.hackautumn2025.dto.HistoryUnit
-import org.sonso.hackautumn2025.service.RoomService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 class RoomController(
     private val roomService: RoomService
 ) {
+    private val logger = LoggerFactory.getLogger(RoomController::class.java)
 
     @PostMapping
     @Operation(
@@ -139,8 +141,8 @@ class RoomController(
         val participants = roomService.getRoomParticipants(roomId)
         return ResponseEntity.ok(participants)
     }
-    
-      @GetMapping("/closed")
+
+    @GetMapping("/closed")
     @Operation(summary = "Выкачка отчета о транзакциях пользователей")
     fun getAllClosedConferenceList(
         @RequestHeader(value = "Authorization") token: String
