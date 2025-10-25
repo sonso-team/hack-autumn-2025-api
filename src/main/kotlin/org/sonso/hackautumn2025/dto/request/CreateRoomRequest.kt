@@ -1,7 +1,5 @@
 package org.sonso.hackautumn2025.dto.request
 
-import org.sonso.hackautumn2025.properties.RoomType
-
 data class CreateRoomRequest(
     val name: String,
     val type: String,

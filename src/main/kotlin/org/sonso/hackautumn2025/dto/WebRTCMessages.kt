@@ -1,11 +1,18 @@
 package org.sonso.hackautumn2025.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.util.*
 
 // Сообщение о присоединении к комнате
 data class JoinRoomMessage(
     @JsonProperty("roomId")
-    val roomId: String
+    val roomId: String,
+
+    @JsonProperty("userId")
+    val userId: UUID? = null,
+
+    @JsonProperty("guestName")
+    val guestName: String? = null
 )
 
 // WebRTC Offer
@@ -32,15 +39,44 @@ data class IceCandidateMessage(
     val target: String
 )
 
+data class ParticipantInfo(
+    @JsonProperty("sessionId")
+    val sessionId: String,
+
+    @JsonProperty("userId")
+    val userId: UUID? = null,
+
+    @JsonProperty("nickname")
+    val nickname: String,
+
+    @JsonProperty("avatarUrl")
+    val avatarUrl: String? = null,
+
+    @JsonProperty("isGuest")
+    val isGuest: Boolean = false
+)
+
 // Исходящие сообщения
 data class ParticipantsMessage(
     @JsonProperty("participants")
-    val participants: List<String>
+    val participants: List<ParticipantInfo>
 )
 
 data class UserJoinedMessage(
-    @JsonProperty("socketId")
-    val socketId: String
+    @JsonProperty("sessionId")
+    val sessionId: String,
+
+    @JsonProperty("userId")
+    val userId: UUID? = null,
+
+    @JsonProperty("nickname")
+    val nickname: String,
+
+    @JsonProperty("avatarUrl")
+    val avatarUrl: String? = null,
+
+    @JsonProperty("isGuest")
+    val isGuest: Boolean = false
 )
 
 data class UserLeftMessage(

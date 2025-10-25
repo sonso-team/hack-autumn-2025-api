@@ -1,7 +1,9 @@
+// src/main/kotlin/org/sonso/hackautumn2025/websocket/CallSocketHandler.kt
 package org.sonso.hackautumn2025.websocket
 
 import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.dto.*
+import org.sonso.hackautumn2025.repository.UserRepository
 import org.sonso.hackautumn2025.service.RoomSessionService
 import org.springframework.context.event.EventListener
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -16,6 +18,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent
 class CallSocketHandler(
     private val messagingTemplate: SimpMessagingTemplate,
     private val roomSessionService: RoomSessionService,
+    private val userRepository: UserRepository // ✅ Добавляем
 ) {
 
     private val logger = LoggerFactory.getLogger(CallSocketHandler::class.java)
@@ -28,49 +31,66 @@ class CallSocketHandler(
         val sessionId = headerAccessor.sessionId ?: return
         val roomId = message.roomId
 
-        logger.info("Session $sessionId attempting to join room $roomId")
+        // ✅ Определяем тип пользователя и получаем данные
+        val (userId, nickname, avatarUrl, isGuest) = when {
+            message.userId != null -> {
+                // ✅ Авторизованный пользователь - достаём из БД
+                val user = userRepository.findById(message.userId).orElse(null)
 
-        // Добавляем пользователя в комнату
-        roomSessionService.joinRoom(roomId, sessionId)
+                if (user == null) {
+                    logger.error("❌ User ${message.userId} not found")
+                    return
+                }
 
-        // Получаем всех участников
-        val participants = roomSessionService.getParticipants(roomId)
+                Tuple4(user.id, user.nickname, user.avatarPath, false)
+            }
+            message.guestName != null -> {
+                // ✅ Гость
+                Tuple4(null, message.guestName, null, true)
+            }
+            else -> {
+                logger.error("❌ No userId or guestName provided")
+                return
+            }
+        }
 
-        logger.info("👥 Current participants in room $roomId: $participants")
+        logger.info("${if (isGuest) "Guest" else "User"} $nickname joining room $roomId")
 
-        // Отправляем всем участникам обновлённый список
+        // Сохраняем данные
+        roomSessionService.joinRoom(roomId, sessionId, userId, nickname, avatarUrl, isGuest)
+
+        val participantSessionIds = roomSessionService.getParticipants(roomId)
+
+        // ✅ Собираем данные всех участников
+        val participantsInfo = participantSessionIds.mapNotNull { sid ->
+            val data = roomSessionService.getParticipantData(sid)
+            data?.let {
+                ParticipantInfo(sid, it.userId, it.nickname, it.avatarUrl, it.isGuest)
+            }
+        }
+
+        logger.info("👥 Participants: ${participantsInfo.map { it.nickname }}")
+
+        // Отправляем список всем
         messagingTemplate.convertAndSend(
             "/topic/room/$roomId/participants",
-            ParticipantsMessage(participants)
+            ParticipantsMessage(participantsInfo)
         )
 
-        // Уведомляем других участников (НЕ себя) о новом пользователе
-        // Используем broadcast в topic вместо convertAndSendToUser
-        participants
+        // Уведомляем остальных о новом участнике
+        participantSessionIds
             .filter { it != sessionId }
             .forEach { participantId ->
-                logger.info("Notifying $participantId about new user $sessionId")
-
-                // Отправляем через topic, но с фильтром по destination
                 messagingTemplate.convertAndSend(
                     "/topic/room/$roomId/user-joined-$participantId",
-                    UserJoinedMessage(sessionId)
+                    UserJoinedMessage(sessionId, userId, nickname, avatarUrl, isGuest)
                 )
             }
-
-        logger.info("$sessionId connected to room $roomId with ${participants.size} total participants")
     }
 
     @MessageMapping("/offer")
-    fun handleOffer(
-        @Payload message: OfferMessage,
-        headerAccessor: SimpMessageHeaderAccessor
-    ) {
+    fun handleOffer(@Payload message: OfferMessage, headerAccessor: SimpMessageHeaderAccessor) {
         val sessionId = headerAccessor.sessionId ?: return
-
-        logger.info("Offer from $sessionId to ${message.target}")
-
-        // Используем broadcast через topic с target в пути
         messagingTemplate.convertAndSend(
             "/topic/room/offer/${message.target}",
             OfferFromMessage(message.offer, sessionId)
@@ -78,15 +98,8 @@ class CallSocketHandler(
     }
 
     @MessageMapping("/answer")
-    fun handleAnswer(
-        @Payload message: AnswerMessage,
-        headerAccessor: SimpMessageHeaderAccessor
-    ) {
+    fun handleAnswer(@Payload message: AnswerMessage, headerAccessor: SimpMessageHeaderAccessor) {
         val sessionId = headerAccessor.sessionId ?: return
-
-        logger.info("Answer from $sessionId to ${message.target}")
-
-        // Используем broadcast через topic
         messagingTemplate.convertAndSend(
             "/topic/room/answer/${message.target}",
             AnswerFromMessage(message.answer, sessionId)
@@ -94,15 +107,8 @@ class CallSocketHandler(
     }
 
     @MessageMapping("/ice-candidate")
-    fun handleIceCandidate(
-        @Payload message: IceCandidateMessage,
-        headerAccessor: SimpMessageHeaderAccessor
-    ) {
+    fun handleIceCandidate(@Payload message: IceCandidateMessage, headerAccessor: SimpMessageHeaderAccessor) {
         val sessionId = headerAccessor.sessionId ?: return
-
-        logger.info("ICE candidate from $sessionId to ${message.target}")
-
-        // Используем broadcast через topic
         messagingTemplate.convertAndSend(
             "/topic/room/ice-candidate/${message.target}",
             IceCandidateFromMessage(message.candidate, sessionId)
@@ -112,25 +118,27 @@ class CallSocketHandler(
     @EventListener
     fun handleDisconnect(event: SessionDisconnectEvent) {
         val sessionId = StompHeaderAccessor.wrap(event.message).sessionId ?: return
-
-        logger.info("Session $sessionId disconnecting")
-
-        // Удаляем пользователя из комнаты
         val roomId = roomSessionService.leaveRoom(sessionId) ?: return
 
-        // Уведомляем остальных участников
         messagingTemplate.convertAndSend(
             "/topic/room/$roomId/user-left",
             UserLeftMessage(sessionId)
         )
 
-        // Отправляем обновлённый список участников
-        val participants = roomSessionService.getParticipants(roomId)
+        val participantSessionIds = roomSessionService.getParticipants(roomId)
+        val participantsInfo = participantSessionIds.mapNotNull { sid ->
+            val data = roomSessionService.getParticipantData(sid)
+            data?.let {
+                ParticipantInfo(sid, it.userId, it.nickname, it.avatarUrl, it.isGuest)
+            }
+        }
+
         messagingTemplate.convertAndSend(
             "/topic/room/$roomId/participants",
-            ParticipantsMessage(participants)
+            ParticipantsMessage(participantsInfo)
         )
-
-        logger.info("$sessionId disconnected from room $roomId. Remaining: ${participants.size}")
     }
 }
+
+// Helper
+private data class Tuple4<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)

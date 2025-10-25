@@ -15,7 +15,7 @@ class CorsConfig {
         val configuration = CorsConfiguration()
         configuration.applyPermitDefaultValues()
         configuration.allowedOrigins = listOf(
-            "http://localhost:5173",
+            "http://localhost:5174",
             "https://bank.uwu-devcrew.ru",
             "https://petstore.swagger.io"
         )

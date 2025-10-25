@@ -17,3 +17,8 @@ app:
   minio:
     endpoint: http://localhost:9003
     endpoint-download: http://localhost:9003
+server:
+  tomcat:
+    threads:
+      max: 200 # Увеличиваем максимальное количество потоков
+      min-spare: 10
