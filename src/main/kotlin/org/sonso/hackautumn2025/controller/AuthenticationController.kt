@@ -5,6 +5,14 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.sonso.hackautumn2025.dto.User
+import org.sonso.hackautumn2025.dto.request.AuthenticationRequest
+import org.sonso.hackautumn2025.dto.request.RegistrationRequest
+import org.sonso.hackautumn2025.dto.request.SendCodeRequest
+import org.sonso.hackautumn2025.dto.response.AuthenticationResponse
+import org.sonso.hackautumn2025.entity.UserEntity
+import org.sonso.hackautumn2025.exceptions.AuthenticationException
+import org.sonso.hackautumn2025.service.AuthenticationService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.CookieValue
@@ -14,14 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.sonso.hackautumn2025.dto.User
-import org.sonso.hackautumn2025.dto.request.AuthenticationRequest
-import org.sonso.hackautumn2025.dto.request.RegistrationRequest
-import org.sonso.hackautumn2025.dto.request.SendCodeRequest
-import org.sonso.hackautumn2025.dto.response.AuthenticationResponse
-import org.sonso.hackautumn2025.entity.UserEntity
-import org.sonso.hackautumn2025.service.AuthenticationService
-import org.sonso.hackautumn2025.util.exception.AuthenticationException
 
 @RestController
 @RequestMapping("/api/auth")

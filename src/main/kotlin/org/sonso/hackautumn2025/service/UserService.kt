@@ -2,9 +2,8 @@ package org.sonso.hackautumn2025.service
 
 import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.entity.UserEntity
-import org.sonso.hackautumn2025.properties.MinioProperties
+import org.sonso.hackautumn2025.exceptions.UserNotFoundException
 import org.sonso.hackautumn2025.repository.UserRepository
-import org.sonso.hackautumn2025.util.exception.UserNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
