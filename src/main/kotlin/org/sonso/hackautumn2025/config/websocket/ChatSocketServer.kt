@@ -11,7 +11,8 @@ class ChatSocketServer(
 ): WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry
-            .addHandler(handler, "/ws/chat/**")
+            .addHandler(handler, "/ws/chat")
             .setAllowedOriginPatterns("*")
+            .withSockJS()
     }
 }
