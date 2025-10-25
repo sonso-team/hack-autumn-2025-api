@@ -1,6 +1,6 @@
 package org.sonso.hackautumn2025.service
 
-import org.sonso.hackautumn2025.dto.*
+import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.dto.request.CreateRoomRequest
 import org.sonso.hackautumn2025.dto.request.UpdateRoomRequest
 import org.sonso.hackautumn2025.dto.response.JoinRoomResponse
@@ -10,6 +10,8 @@ import org.sonso.hackautumn2025.entity.RoomParticipantEntity
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.repository.RoomParticipantRepository
 import org.sonso.hackautumn2025.repository.RoomRepository
+import org.sonso.hackautumn2025.repository.UserRepository
+import org.sonso.hackautumn2025.util.toHistoryUnit
 import org.sonso.hackautumn2025.util.toRoomResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,9 +21,13 @@ import java.util.*
 @Service
 class RoomService(
     private val roomRepository: RoomRepository,
-    private val roomParticipantRepository: RoomParticipantRepository
+    private val roomParticipantRepository: RoomParticipantRepository,
+      private val userRepository: UserRepository,
+    private val jwtService: JwtService,
 ) {
 
+    private val logger = LoggerFactory.getLogger(RoomService::class.java)
+    
     @Transactional
     fun createRoom(request: CreateRoomRequest, owner: UserEntity): UUID {
         val room = RoomEntity().apply {
@@ -175,5 +181,27 @@ class RoomService(
             .size
 
         return room.toRoomResponse(participantCount)
+    }
+
+    fun getAllClosedConferenceList(token: String) = roomRepository
+        .findAllByHistoryNotNullAndOwner(
+            requireNotNull(
+                userRepository.findUserEntityById(
+                    UUID.fromString(jwtService.getId(token))
+                )
+            ) {
+                "User is not real. It's mystery. WHAT A HELL WHERE IS HE??? OH MY GOOOOOD"
+            }
+        )
+        .map {
+            it.toHistoryUnit()
+        }
+
+    fun getRoomById(id: String) = requireNotNull(
+        roomRepository.findRoomEntityById(
+            UUID.fromString(id)
+        )
+    ) {
+        "Room is not exist"
     }
 }

@@ -6,10 +6,10 @@ import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.stereotype.Service
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.properties.AuthenticationProperties
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
@@ -52,6 +52,8 @@ class JwtService(
 
     // Экстракторы
     fun getUsername(token: String): String = extractClaims(token).subject
+
+    fun getId(token: String): String = extractClaims(token).id
 
     private fun extractClaims(token: String): Claims = Jwts
         .parser()
