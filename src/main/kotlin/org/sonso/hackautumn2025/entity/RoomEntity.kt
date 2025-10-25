@@ -48,6 +48,9 @@ class RoomEntity {
     @Column(name = "description", length = 200)
     var description: String? = null
 
+    @Column(name = "history")
+    var history: String? = null
+
     @OneToMany(mappedBy = "room", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var participants: MutableSet<RoomParticipantEntity> = mutableSetOf()
 
