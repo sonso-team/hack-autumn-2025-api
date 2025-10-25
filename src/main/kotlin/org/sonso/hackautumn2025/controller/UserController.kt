@@ -43,6 +43,7 @@ class UserController(
 
 
     @DeleteMapping("/delete")
+    @Operation(summary = "Удаление аккаунта", description = "Удаление аккаунта")
     fun deleteById(
         @AuthenticationPrincipal user: UserEntity,
     ): ResponseEntity<User> =

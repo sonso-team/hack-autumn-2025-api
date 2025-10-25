@@ -1,13 +1,13 @@
 package org.sonso.hackautumn2025.service
 
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.sonso.hackautumn2025.dto.request.RoleRequest
 import org.sonso.hackautumn2025.dto.response.RoleResponse
 import org.sonso.hackautumn2025.entity.RoleEntity
 import org.sonso.hackautumn2025.repository.RoleRepository
-import org.sonso.hackautumn2025.util.convertToResponseEventDto
+import org.sonso.hackautumn2025.util.toResponseEventDto
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -23,12 +23,12 @@ class RoleService(
                 log.error("Role with ID $id not found")
                 NoSuchElementException("Role with ID $id not found")
             }
-            .convertToResponseEventDto()
+            .toResponseEventDto()
     }
 
     fun getAll(): List<RoleResponse> {
         log.info("Fetching all roles")
-        return roleRepository.findAll().map { it.convertToResponseEventDto() }
+        return roleRepository.findAll().map { it.toResponseEventDto() }
     }
 
     @Transactional
@@ -37,7 +37,7 @@ class RoleService(
 
         return roleRepository.save(
             RoleEntity().apply{name = roleName.roleName}
-        ).convertToResponseEventDto().also {
+        ).toResponseEventDto().also {
             log.info("Role saved successfully: $roleName")
         }
     }
@@ -52,7 +52,7 @@ class RoleService(
 
         roleRepository.delete(existingRole)
         log.info("Role deleted successfully: $id")
-        return existingRole.convertToResponseEventDto()
+        return existingRole.toResponseEventDto()
     }
 
 }
