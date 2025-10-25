@@ -1,12 +1,12 @@
 package org.sonso.hackautumn2025.service
 
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.sonso.hackautumn2025.dto.User
 import org.sonso.hackautumn2025.dto.request.UserUpdateRequest
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.exceptions.UserNotFoundException
 import org.sonso.hackautumn2025.repository.UserRepository
-import org.sonso.hackautumn2025.exception.UserNotFoundException
 import org.sonso.hackautumn2025.util.toUser
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
