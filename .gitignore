@@ -1,0 +1,9 @@
+﻿# Gradle / Java
+/build/
+/.gradle/
+/out/
+/*.log
+
+# IDE
+/.idea/
+/*.iml
