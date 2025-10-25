@@ -8,6 +8,10 @@ spring:
     username: ${PG_USERNAME}
     password: ${PG_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6300
 
 app:
   minio:
