@@ -1,17 +1,24 @@
 package org.sonso.hackautumn2025.config.websocket
 
-import org.sonso.hackautumn2025.websocket.CallSocketHandler
-import org.springframework.stereotype.Component
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
+import org.springframework.context.annotation.Configuration
+import org.springframework.messaging.simp.config.MessageBrokerRegistry
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 
-@Component
-class CallSocketServer(
-    private val handler: CallSocketHandler,
-): WebSocketConfigurer {
-    override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry
-            .addHandler(handler, "/ws/call/**")
+@Configuration
+@EnableWebSocketMessageBroker
+class CallSocketServer : WebSocketMessageBrokerConfigurer {
+
+    override fun configureMessageBroker(registry: MessageBrokerRegistry) {
+        registry.enableSimpleBroker("/topic", "/queue")
+
+        registry.setApplicationDestinationPrefixes("/app")
+    }
+
+    override fun registerStompEndpoints(registry: StompEndpointRegistry) {
+        registry.addEndpoint("/ws/signaling")
             .setAllowedOriginPatterns("*")
+            .withSockJS()
     }
 }

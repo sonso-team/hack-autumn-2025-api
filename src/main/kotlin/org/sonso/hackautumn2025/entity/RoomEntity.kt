@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.sonso.hackautumn2025.properties.RoomType
 import java.time.LocalDateTime
 import java.util.*
 
@@ -30,7 +31,7 @@ class RoomEntity {
     var status: String? = null
 
     @Column(name = "type", nullable = false, length = 30)
-    var type: String = ""
+    var type: String = RoomType.NO_AUTH
 
     @Column(name = "access_code", length = 255)
     var accessCode: String? = null
