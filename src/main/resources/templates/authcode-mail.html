@@ -13,9 +13,6 @@
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
         }
-        table {
-            border-collapse: collapse;
-        }
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -52,59 +49,21 @@
     Ваш одноразовый код для входа — действителен {{MINUTES}} минут
 </div>
 
-<table
-        width="100%"
-        cellpadding="0"
-        cellspacing="0"
-        role="presentation"
-        style="background-color: #ffffff"
->
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff">
     <tr>
         <td align="center" style="padding: 24px 12px">
-            <table
-                    class="container"
-                    width="600"
-                    cellpadding="0"
-                    cellspacing="0"
-                    role="presentation"
-                    style="
-              max-width: 600px;
-              width: 100%;
-              background-color: #ffffff;
-              border-radius: 12px;
-              overflow: hidden;
-              box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
-            "
-            >
+            <table class="container" width="600" cellpadding="0" cellspacing="0" role="presentation"
+                   style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);">
                 <!-- Верхняя полоса с градиентом -->
                 <tr>
-                    <td
-                            style="
-                  background: linear-gradient(90deg, #ff6a00 0%, #ffd4a3 100%);
-                  padding: 18px;
-                "
-                    >
+                    <td style="background: linear-gradient(90deg, #ff6a00 0%, #ffd4a3 100%); padding: 18px;">
                         <table width="100%" role="presentation">
                             <tr>
-                                <td
-                                        style="
-                        color: #ffffff;
-                        font-size: 20px;
-                        font-weight: 700;
-                        text-align: left;
-                      "
-                                >
-                                    NiCall'I
+                                <td style="color: #ffffff; font-size: 20px; font-weight: 700; text-align: left;">
+                                    Такая-то Conf
                                 </td>
                                 <td style="text-align: right">
-                                    <!-- Логотип можно вставить сюда -->
-                                    <img
-                                            src="https://via.placeholder.com/48x48/ffffff/ffffff?text="
-                                            alt=""
-                                            width="48"
-                                            height="48"
-                                            style="display: block; border: 0"
-                                    />
+                                    <!-- Логотип убран -->
                                 </td>
                             </tr>
                         </table>
@@ -113,66 +72,31 @@
 
                 <!-- Контент -->
                 <tr>
-                    <td
-                            class="content-padding"
-                            style="padding: 28px 32px; background-color: #ffffff"
-                    >
-                        <h1
-                                style="
-                    margin: 0 0 12px 0;
-                    font-size: 22px;
-                    color: #222222;
-                    font-weight: 700;
-                  "
-                        >
+                    <td class="content-padding" style="padding: 28px 32px; background-color: #ffffff">
+                        <h1 style="margin: 0 0 12px 0; font-size: 22px; color: #222222; font-weight: 700;">
                             Ваш одноразовый код
                         </h1>
                         <p style="margin: 0 0 18px 0; color: #555555; line-height: 1.5">
                             Используйте код ниже для подтверждения входа. Код действует
-                            <strong>2 минуты</strong>. Если вы не запрашивали код, просто
-                            проигнорируйте это письмо.
+                            <strong>2 минуты</strong>. Если вы не запрашивали код, просто проигнорируйте это письмо.
                         </p>
 
                         <!-- Блок с кодом -->
-                        <table
-                                width="100%"
-                                cellpadding="0"
-                                cellspacing="0"
-                                role="presentation"
-                                style="margin: 18px 0"
-                        >
+                        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin: 18px 0">
                             <tr>
                                 <td align="center">
-                                    <div
-                                            class="code-box"
-                                            style="
-                          display: inline-block;
-                          padding: 20px 28px;
-                          background: linear-gradient(180deg, #fff6ed, #ffd4a3);
-                          border-radius: 10px;
-                          font-size: 32px;
-                          font-weight: 700;
-                          letter-spacing: 8px;
-                          color: #ff6a00;
-                        "
-                                    >
+                                    <div class="code-box" style="display: inline-block; padding: 20px 28px; background: linear-gradient(180deg, #fff6ed, #ffd4a3); border-radius: 10px; font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #ff6a00;">
                                         {{password}}
                                     </div>
                                 </td>
                             </tr>
                         </table>
+                    </td>
+                </tr>
 
-                        <!-- Подвал -->
+                <!-- Подвал -->
                 <tr>
-                    <td
-                            style="
-                      background-color: #fff8f2;
-                      padding: 16px 24px;
-                      text-align: center;
-                      color: #555555;
-                      font-size: 13px;
-                    "
-                    >
+                    <td style="background-color: #fff8f2; padding: 16px 24px; text-align: center; color: #555555; font-size: 13px;">
                         <div style="max-width: 520px; margin: 0 auto">
                             <p style="margin: 0 0 8px 0">
                                 Спасибо, что пользуетесь нашим сервисом.
@@ -180,11 +104,9 @@
                         </div>
                     </td>
                 </tr>
+            </table>
         </td>
     </tr>
-</table>
-</td>
-</tr>
 </table>
 </body>
 </html>

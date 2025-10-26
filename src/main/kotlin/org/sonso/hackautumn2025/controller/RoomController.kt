@@ -98,9 +98,9 @@ class RoomController(
         @Parameter(description = "Уникальный идентификатор комнаты", required = true)
         @PathVariable roomId: UUID,
         @RequestBody(required = false) request: JoinRoomRequest?,
-        @Parameter(hidden = true) @AuthenticationPrincipal user: UserEntity
+        @Parameter(hidden = true) @AuthenticationPrincipal user: UserEntity?
     ): ResponseEntity<JoinRoomResponse> {
-        val response = roomService.joinRoom(roomId, user.id, request?.accessCode)
+        val response = roomService.joinRoom(roomId, user?.id, request?.accessCode)
         return ResponseEntity.ok(response)
     }
 

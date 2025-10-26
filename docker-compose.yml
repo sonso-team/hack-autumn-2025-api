@@ -56,6 +56,8 @@ services:
       MINIO_ROOT_USER: $MINIO_USERNAME
       MINIO_ROOT_PASSWORD: $MINIO_PASSWORD
     restart: always
+    volumes:
+      - /home/kinoko/minio/hack-minio:./
     ports:
       - $MINIO_API_PORT:9000
       - $MINIO_CLI_PORT:9001
