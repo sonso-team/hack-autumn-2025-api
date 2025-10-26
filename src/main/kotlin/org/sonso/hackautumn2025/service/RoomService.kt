@@ -8,6 +8,8 @@ import org.sonso.hackautumn2025.dto.response.RoomResponse
 import org.sonso.hackautumn2025.entity.RoomEntity
 import org.sonso.hackautumn2025.entity.RoomParticipantEntity
 import org.sonso.hackautumn2025.entity.UserEntity
+import org.sonso.hackautumn2025.properties.RoomStatus.ACTIVE
+import org.sonso.hackautumn2025.properties.RoomType.PROTECTED
 import org.sonso.hackautumn2025.repository.RoomParticipantRepository
 import org.sonso.hackautumn2025.repository.RoomRepository
 import org.sonso.hackautumn2025.repository.UserRepository
@@ -100,7 +102,7 @@ class RoomService(
     }
 
     @Transactional
-    fun deleteRoom(roomId: UUID, userId: UUID) {
+    fun deleteRoom(roomId: UUID, userId: UUID): RoomResponse {
         val room = roomRepository.findById(roomId)
             .orElseThrow { IllegalArgumentException("Room not found with id: $roomId") }
 
@@ -109,15 +111,17 @@ class RoomService(
         }
 
         roomRepository.delete(room)
+
+        return toRoomResponse(room)
     }
 
     @Transactional
     fun joinRoom(roomId: UUID, userId: UUID, accessCode: String?): JoinRoomResponse {
-        val room = roomRepository.findByIdAndStatus(roomId, "ACTIVE")
+        val room = roomRepository.findByIdAndStatus(roomId, ACTIVE)
             .orElseThrow { IllegalArgumentException("Room not found or inactive") }
 
         // Проверка пароля для приватных комнат
-        if (room.type == "PASSWORD_PROTECTED") {
+        if (room.type == PROTECTED) {
             if (room.accessCode != accessCode) {
                 throw IllegalArgumentException("Invalid access code")
             }

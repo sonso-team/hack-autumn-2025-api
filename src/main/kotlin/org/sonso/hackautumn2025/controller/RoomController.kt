@@ -14,6 +14,7 @@ import org.sonso.hackautumn2025.dto.response.JoinRoomResponse
 import org.sonso.hackautumn2025.dto.response.RoomResponse
 import org.sonso.hackautumn2025.entity.UserEntity
 import org.sonso.hackautumn2025.service.RoomService
+import org.sonso.hackautumn2025.websocket.CallSocketHandler
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -32,7 +33,8 @@ import java.util.*
 @RequestMapping("/api/rooms")
 @Tag(name = "RoomController", description = "Контроллер для управления комнатами видеоконференций")
 class RoomController(
-    private val roomService: RoomService
+    private val roomService: RoomService,
+    private val callSocketHandler: CallSocketHandler
 ) {
     private val logger = LoggerFactory.getLogger(RoomController::class.java)
 
@@ -121,6 +123,22 @@ class RoomController(
     ): ResponseEntity<Void> {
         roomService.leaveRoom(roomId, user.id)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/delete/{roomId}")
+    @Operation(
+        summary = "Завершить конференцию",
+        description = "Закрытие комнаты, отключение всех участников"
+    )
+    fun delete(
+        @Parameter(description = "Уникальный идентификатор комнаты", required = true)
+        @PathVariable roomId: UUID,
+        @Parameter(hidden = true) @AuthenticationPrincipal user: UserEntity
+    ): ResponseEntity<RoomResponse> {
+        // Уведомление websocket-участников о завершении
+        callSocketHandler.closeConference (roomId.toString(), user.id)
+
+        return ResponseEntity.ok(roomService.deleteRoom(roomId, user.id))
     }
 
     @GetMapping("/{roomId}/participants")
