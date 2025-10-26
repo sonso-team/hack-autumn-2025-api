@@ -19,7 +19,7 @@ class RoomSessionService {
 
     private val rooms = ConcurrentHashMap<String, MutableList<String>>()
     private val sessionToRoom = ConcurrentHashMap<String, String>()
-    private val sessionToParticipant = ConcurrentHashMap<String, ParticipantData>() // ✅ Новое
+    private val sessionToParticipant = ConcurrentHashMap<String, ParticipantData>()
 
     fun joinRoom(
         roomId: String,
@@ -56,5 +56,10 @@ class RoomSessionService {
 
     fun getParticipantData(sessionId: String): ParticipantData? {
         return sessionToParticipant[sessionId]
+    }
+
+    fun removeRoom(roomId: String) {
+        rooms[roomId]?.forEach { sessionId -> sessionToParticipant.remove(sessionId) }
+        rooms.remove(roomId)
     }
 }
