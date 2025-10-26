@@ -24,12 +24,12 @@ import java.util.*
 class RoomService(
     private val roomRepository: RoomRepository,
     private val roomParticipantRepository: RoomParticipantRepository,
-      private val userRepository: UserRepository,
+    private val userRepository: UserRepository,
     private val jwtService: JwtService,
 ) {
 
     private val logger = LoggerFactory.getLogger(RoomService::class.java)
-    
+
     @Transactional
     fun createRoom(request: CreateRoomRequest, owner: UserEntity): UUID {
         val room = RoomEntity().apply {
@@ -116,7 +116,7 @@ class RoomService(
     }
 
     @Transactional
-    fun joinRoom(roomId: UUID, userId: UUID, accessCode: String?): JoinRoomResponse {
+    fun joinRoom(roomId: UUID, userId: UUID?, accessCode: String?): JoinRoomResponse {
         val room = roomRepository.findByIdAndStatus(roomId, ACTIVE)
             .orElseThrow { IllegalArgumentException("Room not found or inactive") }
 
@@ -135,27 +135,36 @@ class RoomService(
         if (room.maxParticipants != null && currentParticipants >= room.maxParticipants!!) {
             throw IllegalArgumentException("Room is full")
         }
+        var participant = RoomParticipantEntity()
 
         // Проверяем, есть ли уже участник
-        val existingParticipant = roomParticipantRepository.findByRoomIdAndUserId(roomId, userId)
-
-        if (existingParticipant.isPresent) {
-            val participant = existingParticipant.get()
-            if (participant.leftAt != null) {
-                // Повторное присоединение
-                participant.joinedAt = LocalDateTime.now()
-                participant.leftAt = null
-                roomParticipantRepository.save(participant)
+        if (userId != null) {
+            val existingParticipant = roomParticipantRepository.findByRoomIdAndUserId(roomId, userId)
+            if (existingParticipant.isPresent) {
+                participant = existingParticipant.get()
+                if (participant.leftAt != null) {
+                    // Повторное присоединение
+                    participant.joinedAt = LocalDateTime.now()
+                    participant.leftAt = null
+                    roomParticipantRepository.save(participant)
+                }
+            } else {
+                // Новый участник
+                participant.apply {
+                    this.room = room
+                    this.userId = userId
+                    joinedAt = LocalDateTime.now()
+                }
             }
         } else {
-            // Новый участник
-            val participant = RoomParticipantEntity().apply {
+            participant.apply {
                 this.room = room
-                this.userId = userId
+                this.userId = UUID.randomUUID()
                 joinedAt = LocalDateTime.now()
             }
-            roomParticipantRepository.save(participant)
         }
+
+        roomParticipantRepository.save(participant)
 
         return JoinRoomResponse(
             roomId = room.id,
